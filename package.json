@@ -1,0 +1,44 @@
+{
+  "name": "@fastly/create-compute",
+  "version": "0.1.0-beta.0",
+  "license": "MIT",
+  "description": "A CLI for creating new JavaScript (TypeScript) applications on Fastly Compute",
+  "type": "module",
+  "bin": "./dist/cli/index.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "prepack": "npm run clean && npm run test && npm run build",
+    "build": "tsc --build tsconfig.json",
+    "clean": "rm -rf dist",
+    "test": "c8 mocha -n no-warnings=86652 -n loader=ts-node/esm --extension ts --require ./src/test/mocha_bootstrap.js ./src/test/testHelpers.ts ./src/test/**/*.test.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fastly/create-compute-js.git"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.7.0",
+    "command-line-args": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/command-line-args": "^5.2.3",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.14.11",
+    "@types/sinon": "^10.0.15",
+    "c8": "^7.13.0",
+    "mocha": "^10.2.0",
+    "sinon": "^15.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.js.map",
+    "dist/**/*.d.ts",
+    "LICENSE",
+    "README.md",
+    "SECURITY.md"
+  ]
+}
