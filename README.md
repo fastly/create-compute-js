@@ -20,9 +20,10 @@ In its simplest form:
 npm create @fastly/compute
 ```
 
-You may also pass a number of command line arguments:
+You may also pass a number of command line options, in the form of `npm create @fastly/compute -- [<options>]`:
 
 ```
+Options:
   --help                        - Displays a help screen.
   --directory=<pathspec>        - Specifies the directory to create the new
                                   application. Must not already exist.

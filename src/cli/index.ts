@@ -30,9 +30,9 @@ function displayHelp() {
 Initializes a Fastly Compute JavaScript (TypeScript) application.
 
 Usage:
-  npm create @fastly/compute [<flags>]
+  npm create @fastly/compute -- [<options>]
 
-Flags:
+Options:
   --help                        - Displays this help screen.
   --directory=<pathspec>        - Specifies the directory to create the new
                                   application. Must not already exist.
@@ -68,6 +68,8 @@ Notes:
 const { argv } = process;
 
 intro('@fastly/create-compute');
+
+log.info('Use `npm create @fastly/create-compute -- --help` for options');
 
 // Parse command line options
 let commandLineOptions: CommandLineOptions;
