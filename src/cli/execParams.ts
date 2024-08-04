@@ -121,13 +121,30 @@ export async function buildExecParams(commandLineOptions: CommandLineOptions): P
 
         } else {
 
+          const useStarterKit =
+            Boolean(commandLineOptions['default-starter-kit']) ||
+            Boolean(commandLineOptions['starter-kit']);
+
+          const message = useStarterKit ?
+            'Select a language for your Compute application.' :
+            'Select a language for your Compute application, or specify a starter kit.'
+
+          const options: { value: Language | '__other', label: string, hint?: string}[] = [
+            { value: 'javascript', label: 'JavaScript' },
+            { value: 'typescript', label: 'TypeScript' },
+          ];
+
+          if (!useStarterKit) {
+            options.push({
+              value: '__other',
+              label: 'Specify starter kit or directory',
+              hint: 'Path to existing Compute app, GitHub URL of a starter kit, or Fastly Fiddle URL.'
+            });
+          }
+
           const promptValue: symbol | Language | '__other' = await select({
-            message: 'Select a language for your Compute application, or specify a starter kit.',
-            options: [
-              { value: 'javascript', label: 'JavaScript' },
-              { value: 'typescript', label: 'TypeScript' },
-              { value: '__other', label: 'Specify starter kit or directory', hint: 'Path to existing Compute app, GitHub URL of a starter kit, or Fastly Fiddle URL.' }
-            ]
+            message,
+            options,
           });
 
           if (isCancel(promptValue)) {
@@ -189,77 +206,91 @@ export async function buildExecParams(commandLineOptions: CommandLineOptions): P
 
         let starterKit: string;
         {
-          const optionValue = commandLineOptions['starter-kit'];
-          if (typeof optionValue === 'string' && optionValue !== '') {
+          const optionValue = commandLineOptions['default-starter-kit'];
+          if (optionValue) {
 
-            // We must allow any, because they might exist on GitHub.
-            starterKit = optionValue;
-            note(`Using specified starter kit: ${starterKit}.`);
+            if (commandLineOptions['starter-kit'] != null) {
+              throw new BuildExecParamsCancelledError([`'starter-kit' cannot be used with 'default-starter-kit'.`]);
+            }
+            starterKit = starterKitFullNameToShortName(language, KNOWN_STARTER_KITS[language][0].fullName);
+            note(`Using default starter kit for '${language}'.`);
 
           } else {
 
-            // Allow choosing from the default list first.
-
             {
-              const promptValue: symbol | string = await select({
-                message: 'Select a starter kit',
-                options: [
-                  ...KNOWN_STARTER_KITS[language].map(repository => {
-                    const shortName = starterKitFullNameToShortName(language, repository.fullName);
-                    return {
-                      value: shortName,
-                      label: `[${shortName}] ${repository.description}`,
-                    };
-                  }),
-                  {
-                    value: '__other',
-                    label: 'Choose a starter kit from GitHub.',
-                  }
-                ],
-              });
-              if (isCancel(promptValue)) {
-                throw new BuildExecParamsCancelledError();
-              }
+              const optionValue = commandLineOptions['starter-kit'];
+              if (typeof optionValue === 'string' && optionValue !== '') {
 
-              if (promptValue === '__other') {
+                // We must allow any, because they might exist on GitHub.
+                starterKit = optionValue;
+                note(`Using specified starter kit: ${starterKit}.`);
 
-                let starterKits: Repository[];
+              } else {
 
-                const s = spinner();
-                try {
-                  s.start('Querying GitHub for starter kits...');
-
-                  starterKits = await findReposStartWith(null, 'fastly', 'compute-starter-kit-' + language);
-
-                } finally {
-                  s.stop();
-                }
+                // Allow choosing from the known list first.
 
                 {
                   const promptValue: symbol | string = await select({
                     message: 'Select a starter kit',
                     options: [
-                      ...starterKits.map(repository => {
+                      ...KNOWN_STARTER_KITS[language].map(repository => {
                         const shortName = starterKitFullNameToShortName(language, repository.fullName);
                         return {
                           value: shortName,
                           label: `[${shortName}] ${repository.description}`,
                         };
                       }),
+                      {
+                        value: '__other',
+                        label: 'Choose a starter kit from GitHub.',
+                      }
                     ],
                   });
                   if (isCancel(promptValue)) {
                     throw new BuildExecParamsCancelledError();
                   }
 
-                  starterKit = promptValue;
+                  if (promptValue === '__other') {
 
+                    let starterKits: Repository[];
+
+                    const s = spinner();
+                    try {
+                      s.start('Querying GitHub for starter kits...');
+
+                      starterKits = await findReposStartWith(null, 'fastly', 'compute-starter-kit-' + language);
+
+                    } finally {
+                      s.stop();
+                    }
+
+                    {
+                      const promptValue: symbol | string = await select({
+                        message: 'Select a starter kit',
+                        options: [
+                          ...starterKits.map(repository => {
+                            const shortName = starterKitFullNameToShortName(language, repository.fullName);
+                            return {
+                              value: shortName,
+                              label: `[${shortName}] ${repository.description}`,
+                            };
+                          }),
+                        ],
+                      });
+                      if (isCancel(promptValue)) {
+                        throw new BuildExecParamsCancelledError();
+                      }
+
+                      starterKit = promptValue;
+
+                    }
+
+                  } else {
+
+                    starterKit = promptValue;
+
+                  }
                 }
-
-              } else {
-
-                starterKit = promptValue;
-
               }
             }
           }

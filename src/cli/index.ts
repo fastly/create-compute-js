@@ -19,6 +19,7 @@ const OPTION_DEFINITIONS: commandLineArgs.OptionDefinition[] = [
   { name: 'author', type: String, multiple: true, }, // Author email. If not provided, then will be left empty in fastly.toml.
   { name: 'language', type: String, },               // Language. Can be javascript or typescript. If not provided, then will be prompted.
   { name: 'starter-kit', type: String, },            // Starter kit. If not provided, then will be prompted. Requires --language.
+  { name: 'default-starter-kit', type: Boolean, },   // Default starter kit. Requires --language.
   { name: 'from', type: String, },                   // Path to a directory with a fastly.toml, a URL to a GitHub repo path with a fastly.toml, or a fiddle.
   { name: 'fastly-cli-path', type: String, },        // Path to the fastly CLI command. If not provided, then defaults to $(which fastly) (where in Windows)
   { name: 'no-confirm', type: Boolean, },            // If set, then perform the operation with a confirmation prompt.
@@ -44,7 +45,9 @@ Options:
                                   Cannot be used with --from.
   --starter-kit=<id>            - Used to specify a starter kit. Must be used
                                   with --language, and cannot be used with
-                                  --from.
+                                  --default-starter-kit or --from.
+  --default-starter-kit         - Uses 'default' as the starter kit. Cannot be
+                                  used with --starter-kit or --from.                               
   --from=<pathspec-or-url>      - Specifies a directory with a fastly.toml, a
                                   URL to a GitHub repo path with a fastly.toml,
                                   or a URL to a Fiddle, and will be used as the
