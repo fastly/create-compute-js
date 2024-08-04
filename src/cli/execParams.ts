@@ -8,7 +8,7 @@ import { isCancel, text, spinner, select, note } from '@clack/prompts';
 import { getDirectoryStatus } from './directory.js';
 import { findReposStartWith, repoNameToPath } from './github.js';
 import {
-  DEFAULT_STARTER_KITS,
+  KNOWN_STARTER_KITS,
   starterKitFullNameToShortName,
   starterKitShortNameToFullName,
 } from './fastlyStarterKits.js';
@@ -204,7 +204,7 @@ export async function buildExecParams(commandLineOptions: CommandLineOptions): P
               const promptValue: symbol | string = await select({
                 message: 'Select a starter kit',
                 options: [
-                  ...DEFAULT_STARTER_KITS[language].map(repository => {
+                  ...KNOWN_STARTER_KITS[language].map(repository => {
                     const shortName = starterKitFullNameToShortName(language, repository.fullName);
                     return {
                       value: shortName,

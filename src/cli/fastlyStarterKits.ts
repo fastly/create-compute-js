@@ -5,7 +5,7 @@
 
 import { type Language, type Repository } from './types.js';
 
-export const DEFAULT_STARTER_KITS: Record<Language, Repository[]> = {
+export const KNOWN_STARTER_KITS: Record<Language, Repository[]> = {
   'javascript': [
     {
       fullName: 'fastly/compute-starter-kit-javascript-default',
