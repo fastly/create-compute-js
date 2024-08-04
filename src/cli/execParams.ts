@@ -75,7 +75,7 @@ export async function buildExecParams(commandLineOptions: CommandLineOptions): P
 
     }
 
-    note(`Using directory: ${directory}.`);
+    note(`Using directory: ${directory}`);
 
     // Whatever the value is, we will try to fs.mkdir() after confirmation to make sure
     // we can create the directory.
@@ -90,7 +90,7 @@ export async function buildExecParams(commandLineOptions: CommandLineOptions): P
       authors = [];
     }
     if (authors.length > 0) {
-      note(`Using specified authors: ${authors.join(', ')}.`);
+      note(`Using specified authors: ${authors.join(', ')}`);
     } else {
       note('Using empty authors list.');
     }
@@ -102,7 +102,7 @@ export async function buildExecParams(commandLineOptions: CommandLineOptions): P
     if (typeof optionValue === 'string' && optionValue !== '') {
 
       from = optionValue;
-      note(`Using specified source path or URL: ${from}.`);
+      note(`Using specified source path or URL: ${from}`);
 
     } else {
 
@@ -117,7 +117,7 @@ export async function buildExecParams(commandLineOptions: CommandLineOptions): P
           }
 
           language = LANGUAGE_MAPPINGS[optionValue as keyof typeof LANGUAGE_MAPPINGS];
-          note(`Using specified language: ${language}.`);
+          note(`Using specified language: ${language}`);
 
         } else {
 
@@ -223,7 +223,7 @@ export async function buildExecParams(commandLineOptions: CommandLineOptions): P
 
                 // We must allow any, because they might exist on GitHub.
                 starterKit = optionValue;
-                note(`Using specified starter kit: ${starterKit}.`);
+                note(`Using specified starter kit: ${starterKit}`);
 
               } else {
 

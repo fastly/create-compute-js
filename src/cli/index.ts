@@ -97,7 +97,7 @@ let fastlyCliPath: string | null = null;
   const optionValue = commandLineOptions['fastly-cli-path'];
   if (typeof optionValue === 'string' && optionValue !== '') {
     fastlyCliPath = optionValue;
-    note(`Using specified fastly-cli-path: ${fastlyCliPath}.`);
+    note(`Using specified fastly-cli-path: ${fastlyCliPath}`);
   }
 
   const fastlyCliVersion = getFastlyCliVersion(fastlyCliPath);
@@ -184,6 +184,6 @@ try {
   s2.stop('Application created and initialized!');
 }
 
-log.success(`Application created at ${appDirectory}.`);
+log.success(`Application created at: ${appDirectory}`);
 
 outro('Process completed!');
