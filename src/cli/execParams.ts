@@ -3,9 +3,9 @@
  * Licensed under the MIT license. See LICENSE file for details.
  */
 
-import fs from 'node:fs';
 import { type CommandLineOptions } from 'command-line-args';
 import { isCancel, text, spinner, select, note } from '@clack/prompts';
+import { getDirectoryStatus } from './directory.js';
 import { findReposStartWith, repoNameToPath } from './github.js';
 import {
   DEFAULT_STARTER_KITS,
@@ -43,24 +43,28 @@ export async function buildExecParams(commandLineOptions: CommandLineOptions): P
     if (typeof optionValue === 'string' && optionValue !== '') {
 
       directory = optionValue;
-      if (fs.existsSync(directory)) {
-        throw new BuildExecParamsCancelledError([`Directory '${directory}' already exists!`]);
-      }
-
-      note(`Using specified directory: ${directory}.`);
 
     } else {
 
       const promptValue = await text({
         message: 'Where do you wish to create your application?',
-        placeholder: 'Path to new directory',
-        initialValue: '',
-        validate(value) {
-          if (value === '') {
+        placeholder: 'Path to application directory',
+        initialValue: './',
+        validate(directory) {
+          if (directory === '') {
             return `Cannot be empty!`;
           }
-          if (fs.existsSync(value)) {
-            return `Directory already exists!`;
+          switch(getDirectoryStatus(directory)) {
+          case 'not-directory':
+            return `A file at '${directory}' already exists!`;
+          case 'not-empty':
+            return `Directory '${directory}' is not empty!`;
+          case 'other-error':
+            return `'${directory}' cannot be used!`;
+          case 'available':
+          case 'empty':
+            // available
+            break;
           }
         },
       });
@@ -71,7 +75,9 @@ export async function buildExecParams(commandLineOptions: CommandLineOptions): P
 
     }
 
-    // Whatever the value is, we will try to fs.mkdirSync after confirmation to make sure
+    note(`Using directory: ${directory}.`);
+
+    // Whatever the value is, we will try to fs.mkdir() after confirmation to make sure
     // we can create the directory.
   }
 

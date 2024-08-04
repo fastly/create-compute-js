@@ -26,7 +26,8 @@ You may also pass a number of command line options, in the form of `npm create @
 Options:
   --help                        - Displays a help screen.
   --directory=<pathspec>        - Specifies the directory to create the new
-                                  application. Must not already exist.
+                                  application. If the directory exists, it must
+                                  be empty. Defaults to the current directory.
   --author=<author-name>, ...   - Sets the author(s) in fastly.toml.
   --language=<lang>             - Used to select a category of starter kit.
                                   Can be 'javascript' or 'typescript'.

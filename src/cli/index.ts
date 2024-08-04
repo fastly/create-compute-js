@@ -11,6 +11,7 @@ import path from 'node:path';
 import { confirm, intro, isCancel, log, note, outro, spinner } from '@clack/prompts';
 import { buildExecParams, BuildExecParamsCancelledError, type ExecParams } from './execParams.js';
 import { execFastlyCli, getFastlyCliVersion } from './fastlyCommand.js';
+import {getDirectoryStatus} from "./directory.js";
 
 const OPTION_DEFINITIONS: commandLineArgs.OptionDefinition[] = [
   { name: 'help', type: Boolean, },                  // Display help
@@ -35,7 +36,8 @@ Usage:
 Options:
   --help                        - Displays this help screen.
   --directory=<pathspec>        - Specifies the directory to create the new
-                                  application. Must not already exist.
+                                  application. If the directory exists, it must
+                                  be empty. Defaults to the current directory.
   --author=<author-name>, ...   - Sets the author(s) in fastly.toml.
   --language=<lang>             - Used to select a category of starter kit.
                                   Can be 'javascript' or 'typescript'.
@@ -146,13 +148,30 @@ if (!noConfirm) {
 
 const appDirectory = path.resolve(execParams.directory);
 
-const s1 = spinner();
-s1.start(`Creating application directory ${appDirectory}...`)
-try {
-  await fs.mkdir(execParams.directory);
-} finally {
-  s1.stop('Directory created.');
+const directoryStatus = getDirectoryStatus(appDirectory);
+
+if (directoryStatus === 'not-directory') {
+  log.error(`A file at '${appDirectory}' already exists!`);
+  process.exit(1);
 }
+if (directoryStatus === 'not-empty') {
+  log.error(`Directory '${appDirectory}' is not empty!`);
+  process.exit(1);
+}
+if (directoryStatus === 'other-error') {
+  log.error(`Error using directory '${appDirectory}'!`);
+  process.exit(1);
+}
+if (directoryStatus === 'available') {
+  const s1 = spinner();
+  s1.start(`Creating application directory ${appDirectory}...`)
+  try {
+    await fs.mkdir(execParams.directory);
+  } finally {
+    s1.stop('Directory created.');
+  }
+}
+// if 'empty', then directory already exists and should be usable
 
 const s2 = spinner();
 s2.start('Creating and initializing application, this can take a few minutes...');
