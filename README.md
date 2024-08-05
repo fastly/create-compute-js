@@ -35,8 +35,9 @@ Options:
   --starter-kit=<id>            - Used to specify a starter kit. Must be used
                                   with --language, and cannot be used with
                                   --default-starter-kit or --from.
-  --default-starter-kit         - Uses 'default' as the starter kit. Cannot be
-                                  used with --starter-kit or --from.                               
+  --default-starter-kit         - Uses 'default' as the starter kit.
+                                  Equivalent to --starter-kit=default.
+                                  Cannot be used with --starter-kit or --from.
   --from=<pathspec-or-url>      - Specifies a directory with a fastly.toml, a
                                   URL to a GitHub repo path with a fastly.toml,
                                   or a URL to a Fiddle, and will be used as the

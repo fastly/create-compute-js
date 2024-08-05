@@ -24,7 +24,15 @@ export const KNOWN_STARTER_KITS: Record<Language, Repository[]> = {
   ],
 };
 
+export function defaultStarterKitForLanguage(language: Language) {
+  return KNOWN_STARTER_KITS[language][0];
+}
+
 export function starterKitFullNameToShortName(language: Language, fullName: string) {
+
+  if (fullName === defaultStarterKitForLanguage(language).fullName) {
+    return 'default';
+  }
 
   const prefix = `fastly/compute-starter-kit-${language}`;
 
@@ -32,14 +40,16 @@ export function starterKitFullNameToShortName(language: Language, fullName: stri
     throw new TypeError(`${fullName} not the name of a starter kit of language ${language}`);
   }
 
-  return fullName.length > prefix.length ? fullName.slice(prefix.length + 1) : '(default)';
+  return fullName.slice(prefix.length + 1);
 
 }
 
-export function starterKitShortNameToFullName(language: string, shortName: string) {
+export function starterKitShortNameToFullName(language: Language, shortName: string) {
 
-  const prefix = `fastly/compute-starter-kit-${language}`;
+  if (shortName === 'default') {
+    return defaultStarterKitForLanguage(language).fullName;
+  }
 
-  return shortName === '(default)' ? prefix : `${prefix}-${shortName}`;
+  return `fastly/compute-starter-kit-${language}-${shortName}`;
 
 }
