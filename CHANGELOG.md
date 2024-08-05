@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changed
+
+- `--default-starter-kit` is now equivalent to `--starter-kit==default`.
+
 ## [0.1.0-beta.2]
 
 ### Added
