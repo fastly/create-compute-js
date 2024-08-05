@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Added
+
+- `--list-starter-kits` option lists the starter kits available on GitHub.
+
 ### Changed
 
 - `--default-starter-kit` is now equivalent to `--starter-kit==default`.

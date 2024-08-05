@@ -22,11 +22,21 @@ const LANGUAGE_MAPPINGS: Record<string, Language> = {
   'typescript': 'typescript',
 };
 
-export type ExecParams = {
+export type CreateExecParams = {
+  mode: 'create',
   directory: string,
   authors: string[],
   from: string,
 };
+
+export type ListStarterKitsExecParams = {
+  mode: 'list-starter-kits',
+  language?: Language,
+};
+
+export type ExecParams =
+  | ListStarterKitsExecParams
+  | CreateExecParams;
 
 export class BuildExecParamsCancelledError extends Error {
   messages: string[];
@@ -37,6 +47,25 @@ export class BuildExecParamsCancelledError extends Error {
 }
 
 export async function buildExecParams(commandLineOptions: CommandLineOptions): Promise<ExecParams> {
+
+  const listStarterKitsOptionValue = commandLineOptions['list-starter-kits'];
+  if (Boolean(listStarterKitsOptionValue)) {
+
+    let language: Language | undefined = undefined;
+    const languageOptionValue = commandLineOptions['language'];
+    if (typeof languageOptionValue === 'string') {
+      language = LANGUAGE_MAPPINGS[languageOptionValue as keyof typeof LANGUAGE_MAPPINGS];
+      if (language == null) {
+        throw new BuildExecParamsCancelledError([`Unknown language value: ${languageOptionValue}`]);
+      }
+    }
+
+    return {
+      mode: 'list-starter-kits',
+      language,
+    };
+
+  }
 
   let directory: string;
   {
@@ -306,6 +335,7 @@ export async function buildExecParams(commandLineOptions: CommandLineOptions): P
   }
 
   return {
+    mode: 'create',
     directory,
     authors,
     from,

@@ -4,7 +4,7 @@
  */
 
 import { spawn, spawnSync } from 'node:child_process';
-import { type ExecParams } from './execParams.js';
+import { type CreateExecParams } from './execParams.js';
 
 const re = /^Fastly CLI version (v\d+.\d+.\d)/;
 
@@ -33,7 +33,7 @@ export function getFastlyCliVersion(fastlyCli: string | null) {
   return match[1];
 }
 
-export async function execFastlyCli(fastlyCli: string | null, execParams: ExecParams) {
+export async function execFastlyCli(fastlyCli: string | null, execParams: CreateExecParams) {
 
   const args = [
     `--non-interactive`,

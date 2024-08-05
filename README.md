@@ -38,6 +38,8 @@ Options:
   --default-starter-kit         - Uses 'default' as the starter kit.
                                   Equivalent to --starter-kit=default.
                                   Cannot be used with --starter-kit or --from.
+  --list-starter-kits           - Query GitHub to list the starter kits
+                                  available. May be used with --language.                                
   --from=<pathspec-or-url>      - Specifies a directory with a fastly.toml, a
                                   URL to a GitHub repo path with a fastly.toml,
                                   or a URL to a Fiddle, and will be used as the

@@ -12,6 +12,9 @@ import { confirm, intro, isCancel, log, note, outro, spinner } from '@clack/prom
 import { buildExecParams, BuildExecParamsCancelledError, type ExecParams } from './execParams.js';
 import { execFastlyCli, getFastlyCliVersion } from './fastlyCommand.js';
 import {getDirectoryStatus} from "./directory.js";
+import { starterKitFullNameToShortName } from './fastlyStarterKits.js';
+import { findReposStartWith } from './github.js';
+import { type Language, type RepoShort } from './types.js';
 
 const OPTION_DEFINITIONS: commandLineArgs.OptionDefinition[] = [
   { name: 'help', type: Boolean, },                  // Display help
@@ -20,6 +23,7 @@ const OPTION_DEFINITIONS: commandLineArgs.OptionDefinition[] = [
   { name: 'language', type: String, },               // Language. Can be javascript or typescript. If not provided, then will be prompted.
   { name: 'starter-kit', type: String, },            // Starter kit. If not provided, then will be prompted. Requires --language.
   { name: 'default-starter-kit', type: Boolean, },   // Default starter kit. Requires --language.
+  { name: 'list-starter-kits', type: Boolean, },     // List starter kits.
   { name: 'from', type: String, },                   // Path to a directory with a fastly.toml, a URL to a GitHub repo path with a fastly.toml, or a fiddle.
   { name: 'fastly-cli-path', type: String, },        // Path to the fastly CLI command. If not provided, then defaults to $(which fastly) (where in Windows)
   { name: 'no-confirm', type: Boolean, },            // If set, then perform the operation with a confirmation prompt.
@@ -127,6 +131,57 @@ try {
     process.exit(1);
   }
   throw error;
+}
+
+if (execParams.mode === 'list-starter-kits') {
+
+  const starterKits = await findReposStartWith(null, 'fastly', 'compute-starter-kit');
+
+  let languages: Language[] = [
+    'javascript',
+    'typescript',
+  ];
+  if (execParams.language != null) {
+    languages = [
+      execParams.language,
+    ];
+  }
+
+  const languagesAndRepos: Partial<Record<Language, RepoShort[]>> = {};
+  for (const language of languages) {
+    const prefix = `fastly/compute-starter-kit-${language}`;
+    languagesAndRepos[language] = starterKits.filter(
+      starterKitRepo => starterKitRepo.fullName.startsWith(prefix)
+    ).map(repository => {
+      const { fullName, description } = repository;
+      const shortName = starterKitFullNameToShortName(language, fullName);
+      return {
+        shortName,
+        description,
+      };
+    });
+  }
+
+  const messages: string[] = [];
+
+  messages.push('Available starter kits:');
+  messages.push('');
+
+  for (const [language, repos] of Object.entries(languagesAndRepos)) {
+
+    messages.push(`Language: ${language}`);
+    for (const repo of repos) {
+      messages.push(`  [${repo.shortName}] - ${repo.description}`);
+    }
+
+  }
+
+  messages.push('');
+  messages.push('Use the value listed in brackets with the --starter-kit option.');
+
+  note(messages.join('\n'));
+
+  process.exit(0);
 }
 
 let noConfirm = false;
