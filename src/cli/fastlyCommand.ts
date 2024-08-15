@@ -66,8 +66,8 @@ export async function execFastlyCli(fastlyCli: string | null, execParams: Create
       // process.stdout.write(_x);
     });
 
-    p.stderr.on('data', (x) => {
-      process.stderr.write(x);
+    p.stderr.on('error', (x) => {
+      process.stderr.write(String(x));
     });
 
     p.on('exit', (code) => {
