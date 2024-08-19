@@ -1,6 +1,6 @@
 {
   "name": "@fastly/create-compute",
-  "version": "0.1.0-beta.3",
+  "version": "0.1.0-beta.4",
   "license": "MIT",
   "description": "A CLI for creating new JavaScript (TypeScript) applications on Fastly Compute",
   "type": "module",
