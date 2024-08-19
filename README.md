@@ -63,9 +63,17 @@ By using the `--from` argument, or by selecting `Specify starter kit or director
 * A direct URL to a GitHub repository of a [Fastly Compute Starter Kit](https://www.fastly.com/documentation/solutions/starters/javascript/).
 * A URL to a Fastly Fiddle. This should take the form of `https://fiddle.fastly.dev/fiddle/<fiddle-id>`.
 
+## Fastly CLI
+
+By default, this tool uses the Fastly CLI from the [`@fastly/cli` package](https://www.npmjs.com/package/@fastly/create-compute).
+Alternatively, to use a locally installed copy of the Fastly CLI (version >= 10.0.0), specify it using the `--fastly-cli-path` option:
+
+```
+npm create @fastly/compute -- --fastly-cli-path=/path/to/fastly
+```
+
 ## Prerequisites:
 
-* [Fastly CLI](https://developer.fastly.com/learning/tools/cli/), version >= 10.0.0
 * [Node.js](https://nodejs.org/) >= 18
 
 ## Issues
