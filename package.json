@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@clack/prompts": "^0.7.0",
+    "@fastly/cli": "^10.13.3",
     "command-line-args": "^6.0.0"
   },
   "devDependencies": {

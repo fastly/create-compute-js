@@ -46,8 +46,7 @@ Options:
                                   starting point of the new application. Cannot
                                   be used with --language or --starter-kit.
   --fastly-cli-path=<pathspec>  - Path to the fastly CLI command. If not
-                                  specified, then it will be searched from the
-                                  system path.
+                                  specified, then @fastly/cli will be used.
   --no-confirm                  - Do not show confirmation prompt before
                                   creating the application.
 ```

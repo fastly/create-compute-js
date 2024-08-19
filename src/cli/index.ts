@@ -59,8 +59,7 @@ Options:
                                   starting point of the new application. Cannot
                                   be used with --language or --starter-kit.
   --fastly-cli-path=<pathspec>  - Path to the fastly CLI command. If not
-                                  specified, then it will be searched from the
-                                  system path.
+                                  specified, then @fastly/cli will be used.
   --no-confirm                  - Do not show confirmation prompt before
                                   creating the application.
   
@@ -68,8 +67,8 @@ Notes:
 
 * If --author is not provided, then fastly.toml will be initialized with an
   empty value.
-* If --fastly-cli-path is not provided, then the 'fastly' command in the
-  system path will be used.
+* If --fastly-cli-path is not provided, then the '@fastly/cli' package will
+  be used.
 * If --directory, --language, or --starter-kit are not provided, then you will
   be prompted for them. 
 `);
@@ -113,7 +112,7 @@ let fastlyCliPath: string | null = null;
     if (fastlyCliPath != null) {
       log.error(`Check to make sure that the specified Fastly CLI path '${fastlyCliPath}' is correct.`);
     } else {
-      log.error(`Check to make sure that Fastly CLI is in the system path. Alternatively specify the path using --fastly-cli-path.`);
+      log.error(`Error executing Fastly CLI. Alternatively specify the path using --fastly-cli-path.`);
     }
 
     process.exit(1);
