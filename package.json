@@ -2,7 +2,7 @@
   "name": "@fastly/create-compute",
   "version": "0.1.1",
   "license": "MIT",
-  "description": "A CLI for creating new JavaScript (TypeScript) applications on Fastly Compute",
+  "description": "An npm init initializer for creating a new JavaScript (TypeScript) application on Fastly Compute",
   "type": "module",
   "bin": "dist/cli/index.js",
   "engines": {
