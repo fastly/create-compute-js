@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.1.2] - 2025/02/25
+
 ### Updated
 
 - Fixes for updated TypeScript default starter kit name
@@ -25,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release
 
-[unreleased]: https://github.com/fastly/create-compute-js/compare/v0.1.1...HEAD
+[unreleased]: https://github.com/fastly/create-compute-js/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/fastly/create-compute-js/compare/v0.1.2...v0.1.1
 [0.1.1]: https://github.com/fastly/create-compute-js/compare/v0.1.1...v0.1.0
 [0.1.0]: https://github.com/fastly/create-compute-js/releases/tag/v0.1.0
