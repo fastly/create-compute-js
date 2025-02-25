@@ -18,7 +18,7 @@ export const KNOWN_STARTER_KITS: Record<Language, Repository[]> = {
   ],
   'typescript': [
     {
-      fullName: 'fastly/compute-starter-kit-typescript',
+      fullName: 'fastly/compute-starter-kit-typescript-default',
       description: 'A simple Fastly starter kit for Typescript',
     },
   ],
