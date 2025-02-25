@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixes for updated TypeScript default starter kit name
 
-## [0.1.1]
+## [0.1.1] - 2024/12/02
 
 ### Fixed
 
@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Release to npm using CI
 
-## [0.1.0]
+## [0.1.0] - 2024/07/27
 
 - Initial release
 
