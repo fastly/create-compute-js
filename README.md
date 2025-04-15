@@ -3,7 +3,7 @@
 An initializer for `npm create` to interactively create new JavaScript (TypeScript) applications for Fastly Compute.
 
 ```shell
-npm create @fastly/compute
+npm create @fastly/compute@latest
 ```
 
 Follow the interactive prompts to select between JavaScript and Typescript and a starter kit, to initialize your Fastly Compute application.
@@ -17,10 +17,10 @@ Follow the interactive prompts to select between JavaScript and Typescript and a
 In its simplest form:
 
 ```shell
-npm create @fastly/compute
+npm create @fastly/compute@latest
 ```
 
-You may also pass a number of optional command line options, in the form of `npm create @fastly/compute -- [<options>]`:
+You may also pass a number of optional command line options, in the form of `npm create @fastly/compute@latest -- [<options>]`:
 
 ```
 Options:

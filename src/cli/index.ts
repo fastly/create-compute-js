@@ -87,9 +87,9 @@ Notes:
 
 const { argv } = process;
 
-intro('@fastly/create-compute');
+intro('create @fastly/compute');
 
-log.info('Use `npm create @fastly/create-compute -- --help` for options');
+log.info('Use `npm create @fastly/compute@latest -- --help` for options');
 
 // Parse command line options
 let commandLineOptions: CommandLineOptions;
