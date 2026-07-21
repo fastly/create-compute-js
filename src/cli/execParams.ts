@@ -6,14 +6,14 @@
 import path from 'node:path';
 import { type CommandLineOptions } from 'command-line-args';
 import { isCancel, text, spinner, select, note } from '@clack/prompts';
-import { findReposStartWith, repoNameToPath } from './github.js';
 import {
-  KNOWN_STARTER_KITS,
-  defaultStarterKitForLanguage,
-  starterKitFullNameToShortName,
-  starterKitShortNameToFullName,
+  fetchStarterKits,
+  starterKitFrom,
+  starterKitNameForLanguage,
+  starterKitShortName,
+  type StarterKit,
 } from './fastlyStarterKits.js';
-import { type Language, type Repository } from './types.js';
+import { type Language } from './types.js';
 
 const LANGUAGE_MAPPINGS: Record<string, Language> = {
   'js': 'javascript',
@@ -209,9 +209,7 @@ export async function buildExecParams(commandLineOptions: CommandLineOptions): P
 
       } else {
 
-        const defaultStarterKit = defaultStarterKitForLanguage(language);
-
-        let starterKit: string;
+        let starterKitName: string;
         {
           const defaultStarterKitOptionValue = commandLineOptions['default-starter-kit'];
           const starterKitOptionValue = commandLineOptions['starter-kit'];
@@ -226,85 +224,55 @@ export async function buildExecParams(commandLineOptions: CommandLineOptions): P
             }
 
             note(`Using default starter kit for '${language}'.`);
-            from = repoNameToPath(defaultStarterKit.fullName);
+            starterKitName = starterKitNameForLanguage(language, 'default');
 
           } else if (typeof starterKitOptionValue === 'string' && starterKitOptionValue !== '') {
 
-            // We must allow any, because they might exist on GitHub.
-            starterKit = starterKitOptionValue;
-
-            note(`Using specified starter kit: ${starterKit}`);
-            const fullName = starterKitShortNameToFullName(language, starterKit);
-            from = repoNameToPath(fullName);
+            // We must allow any, because they might exist in the starter-kit catalog.
+            note(`Using specified starter kit: ${starterKitOptionValue}`);
+            starterKitName = starterKitNameForLanguage(language, starterKitOptionValue);
 
           } else {
 
-            // Allow choosing from the known list first.
-            let promptValue: symbol | string = await select({
+            let starterKits: StarterKit[];
+
+            const s = spinner();
+            try {
+              s.start('Fetching available starter kits...');
+              starterKits = (await fetchStarterKits())[language];
+            } finally {
+              s.stop();
+            }
+
+            // Move "default" kit to front
+            const defaultName = starterKitNameForLanguage(language, 'default');
+            const defaultIndex = starterKits.findIndex(kit => kit.name === defaultName);
+            if (defaultIndex !== -1) {
+              starterKits = [
+                starterKits[defaultIndex],
+                ...starterKits.slice(0, defaultIndex),
+                ...starterKits.slice(defaultIndex + 1),
+              ];
+            }
+
+            const promptValue: symbol | string = await select({
               message: 'Select a starter kit',
-              options: [
-                ...KNOWN_STARTER_KITS[language].map(repository => {
-                  const shortName = starterKitFullNameToShortName(language, repository.fullName);
-                  return {
-                    value: repository.fullName,
-                    label: `[${shortName}] ${repository.description}`,
-                  };
-                }),
-                {
-                  value: '__other',
-                  label: 'Choose a starter kit from GitHub.',
-                }
-              ],
+              options: starterKits.map(kit => ({
+                value: kit.name,
+                label: `[${starterKitShortName(language, kit.name)}] ${kit.description}`,
+              })),
             });
             if (isCancel(promptValue)) {
               throw new BuildExecParamsCancelledError();
             }
 
-            if (promptValue === '__other') {
-
-              // If other was chosen, then go to GitHub
-              let starterKits: Repository[];
-
-              const s = spinner();
-              try {
-                s.start('Querying GitHub for starter kits...');
-                starterKits = await findReposStartWith(null, 'fastly', 'compute-starter-kit-' + language);
-
-                // Move "default" kit to front
-                const defaultStarterKitIndex = starterKits.findIndex(kit => kit.fullName === defaultStarterKit.fullName);
-                if (defaultStarterKitIndex !== -1) {
-                  starterKits = [
-                    starterKits[defaultStarterKitIndex],
-                    ...starterKits.slice(0, defaultStarterKitIndex),
-                    ...starterKits.slice(defaultStarterKitIndex+1),
-                  ];
-                }
-              } finally {
-                s.stop();
-              }
-
-              promptValue = await select({
-                message: 'Select a starter kit',
-                options: [
-                  ...starterKits.map(repository => {
-                    const shortName = starterKitFullNameToShortName(language, repository.fullName);
-                    return {
-                      value: repository.fullName,
-                      label: `[${shortName}] ${repository.description}`,
-                    };
-                  }),
-                ],
-              });
-              if (isCancel(promptValue)) {
-                throw new BuildExecParamsCancelledError();
-              }
-
-            }
-
-            from = repoNameToPath(promptValue);
+            starterKitName = promptValue;
 
           }
         }
+
+        from = starterKitFrom(starterKitName);
+
       }
     }
   }
