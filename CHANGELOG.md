@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.5.0] - 2026/08/14
+
+### Updated
+
+- Source starter kits from the compute-starter-kits catalog service
+- Update to CLI v16.x
+
 ## [0.4.0] - 2026/02/12
 
 ### Updated
