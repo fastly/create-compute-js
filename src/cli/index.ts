@@ -12,9 +12,8 @@ import { confirm, intro, isCancel, log, note, outro, spinner } from '@clack/prom
 import { buildExecParams, BuildExecParamsCancelledError, type ExecParams } from './execParams.js';
 import { execFastlyCli, getFastlyCliVersion } from './fastlyCommand.js';
 import { getDirectoryStatus } from './directory.js';
-import { starterKitFullNameToShortName } from './fastlyStarterKits.js';
-import { findReposStartWith } from './github.js';
-import { type Language, type RepoShort } from './types.js';
+import { fetchStarterKits, starterKitShortName } from './fastlyStarterKits.js';
+import { type Language } from './types.js';
 
 const OPTION_DEFINITIONS: commandLineArgs.OptionDefinition[] = [
   { name: 'help', type: Boolean, },
@@ -145,8 +144,6 @@ try {
 
 if (execParams.mode === 'list-starter-kits') {
 
-  const starterKits = await findReposStartWith(null, 'fastly', 'compute-starter-kit');
-
   let languages: Language[] = [
     'javascript',
     'typescript',
@@ -157,31 +154,19 @@ if (execParams.mode === 'list-starter-kits') {
     ];
   }
 
-  const languagesAndRepos: Partial<Record<Language, RepoShort[]>> = {};
-  for (const language of languages) {
-    const prefix = `fastly/compute-starter-kit-${language}`;
-    languagesAndRepos[language] = starterKits.filter(
-      starterKitRepo => starterKitRepo.fullName.startsWith(prefix)
-    ).map(repository => {
-      const { fullName, description } = repository;
-      const shortName = starterKitFullNameToShortName(language, fullName);
-      return {
-        shortName,
-        description,
-      };
-    });
-  }
+  const starterKitsByLanguage = await fetchStarterKits();
 
   const messages: string[] = [];
 
   messages.push('Available starter kits:');
   messages.push('');
 
-  for (const [language, repos] of Object.entries(languagesAndRepos)) {
+  for (const language of languages) {
 
     messages.push(`Language: ${language}`);
-    for (const repo of repos) {
-      messages.push(`  [${repo.shortName}] - ${repo.description}`);
+    for (const kit of starterKitsByLanguage[language]) {
+      const shortName = starterKitShortName(language, kit.name);
+      messages.push(`  [${shortName}] - ${kit.description}`);
     }
 
   }
